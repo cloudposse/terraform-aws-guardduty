@@ -1,4 +1,4 @@
-# terraform-aws-guard-duty [![Latest Release](https://img.shields.io/github/release/cloudposse/terraform-aws-guard-duty.svg)](https://github.com/cloudposse/terraform-aws-guard-duty/releases/latest) [![Slack Community](https://slack.cloudposse.com/badge.svg)](https://slack.cloudposse.com) [![Discourse Forum](https://img.shields.io/discourse/https/ask.sweetops.com/posts.svg)](https://ask.sweetops.com/)
+# terraform-aws-guardduty [![Latest Release](https://img.shields.io/github/release/cloudposse/terraform-aws-guardduty.svg)](https://github.com/cloudposse/terraform-aws-guardduty/releases/latest) [![Slack Community](https://slack.cloudposse.com/badge.svg)](https://slack.cloudposse.com) [![Discourse Forum](https://img.shields.io/discourse/https/ask.sweetops.com/posts.svg)](https://ask.sweetops.com/)
 
 [![README Header][readme_header_img]][readme_header_link]
 
@@ -25,9 +25,8 @@
 
 -->
 
-This module enables AWS   Hub in one region of one account and optionally sets up an SNS topic to receive 
+This module enables AWS Hub in one region of one account and optionally sets up an SNS topic to receive
 notifications of its findings.
-
 
 ---
 
@@ -39,55 +38,36 @@ This project is part of our comprehensive ["SweetOps"](https://cpco.io/sweetops)
 [<img align="right" title="Share on LinkedIn" src="https://docs.cloudposse.com/images/ionicons/social-linkedin-outline-2.0.1-16x16-999999.svg" />][share_linkedin]
 [<img align="right" title="Share on Twitter" src="https://docs.cloudposse.com/images/ionicons/social-twitter-outline-2.0.1-16x16-999999.svg" />][share_twitter]
 
-
 [![Terraform Open Source Modules](https://docs.cloudposse.com/images/terraform-open-source-modules.svg)][terraform_modules]
-
-
 
 It's 100% Open Source and licensed under the [APACHE2](LICENSE).
 
-
-
-
-
-
-
-We literally have [*hundreds of terraform modules*][terraform_modules] that are Open Source and well-maintained. Check them out!
-
-
-
-
-
-
+We literally have [_hundreds of terraform modules_][terraform_modules] that are Open Source and well-maintained. Check them out!
 
 ## Usage
 
-
 **IMPORTANT:** The `master` branch is used in `source` just as an example. In your code, do not pin to `master` because there may be breaking changes between releases.
-Instead pin to the release tag (e.g. `?ref=tags/x.y.z`) of one of our [latest releases](https://github.com/cloudposse/terraform-aws-guard-duty/releases).
-
+Instead pin to the release tag (e.g. `?ref=tags/x.y.z`) of one of our [latest releases](https://github.com/cloudposse/terraform-aws-guardduty/releases).
 
 Here's how to invoke this example module in your projects
 
 ```hcl
 module "example" {
-  source = "https://github.com/cloudposse/terraform-aws-guard-duty.git?ref=master"
+  source = "https://github.com/cloudposse/terraform-aws-guardduty.git?ref=master"
   example = "Hello world!"
 }
 ```
 
-
-
-
 ## Examples
 
 Here is an example of using this module:
-- [`examples/complete`](https://github.com/cloudposse/terraform-aws-guard-duty/) - complete example of using this module
 
-
+- [`examples/complete`](https://github.com/cloudposse/terraform-aws-guardduty/) - complete example of using this module
 
 <!-- markdownlint-disable -->
+
 ## Makefile Targets
+
 ```text
 Available targets:
 
@@ -97,70 +77,66 @@ Available targets:
   lint                                Lint terraform code
 
 ```
+
 <!-- markdownlint-restore -->
 <!-- markdownlint-disable -->
+
 ## Requirements
 
-| Name | Version |
-|------|---------|
+| Name      | Version   |
+| --------- | --------- |
 | terraform | >= 0.13.0 |
-| aws | >= 2 |
+| aws       | >= 2      |
 
 ## Providers
 
 | Name | Version |
-|------|---------|
-| aws | >= 2 |
+| ---- | ------- |
+| aws  | >= 2    |
 
 ## Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| additional\_tag\_map | Additional tags for appending to tags\_as\_list\_of\_maps. Not added to `tags`. | `map(string)` | `{}` | no |
-| attributes | Additional attributes (e.g. `1`) | `list(string)` | `[]` | no |
-| cloudwatch\_event\_rule\_pattern\_detail\_type | The detail-type pattern used to match events that will be sent to SNS. <br><br>For more information, see:<br>https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html<br>https://docs.aws.amazon.com/eventbridge/latest/userguide/event-types.html<br>https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings_cloudwatch.html | `string` | `"GuardDuty Finding"` | no |
-| context | Single object for setting entire context at once.<br>See description of individual variables for details.<br>Leave string and numeric variables as `null` to use default value.<br>Individual variable settings (non-null) override settings in context object,<br>except for attributes, tags, and additional\_tag\_map, which are merged. | <pre>object({<br>    enabled             = bool<br>    namespace           = string<br>    environment         = string<br>    stage               = string<br>    name                = string<br>    delimiter           = string<br>    attributes          = list(string)<br>    tags                = map(string)<br>    additional_tag_map  = map(string)<br>    regex_replace_chars = string<br>    label_order         = list(string)<br>    id_length_limit     = number<br>  })</pre> | <pre>{<br>  "additional_tag_map": {},<br>  "attributes": [],<br>  "delimiter": null,<br>  "enabled": true,<br>  "environment": null,<br>  "id_length_limit": null,<br>  "label_order": [],<br>  "name": null,<br>  "namespace": null,<br>  "regex_replace_chars": null,<br>  "stage": null,<br>  "tags": {}<br>}</pre> | no |
-| create\_sns\_topic | Flag to indicate whether an SNS topic should be created for notifications.<br>If you want to send findings to a new SNS topic, set this to true and provide a valid configuration for subscribers. | `bool` | `false` | no |
-| delimiter | Delimiter to be used between `namespace`, `environment`, `stage`, `name` and `attributes`.<br>Defaults to `-` (hyphen). Set to `""` to use no delimiter at all. | `string` | `null` | no |
-| enabled | Set to false to prevent the module from creating any resources | `bool` | `null` | no |
-| environment | Environment, e.g. 'uw2', 'us-west-2', OR 'prod', 'staging', 'dev', 'UAT' | `string` | `null` | no |
-| finding\_publishing\_frequency | The frequency of notifications sent for finding occurrences. If the detector is a GuardDuty member account, the value <br>is determined by the GuardDuty master account and cannot be modified, otherwise it defaults to SIX\_HOURS. <br><br>For standalone and GuardDuty master accounts, it must be configured in Terraform to enable drift detection. <br>Valid values for standalone and master accounts: FIFTEEN\_MINUTES, ONE\_HOUR, SIX\_HOURS."<br><br>For more information, see:<br>https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings_cloudwatch.html#guardduty_findings_cloudwatch_notification_frequency | `string` | `null` | no |
-| findings\_notification\_arn | The ARN for an SNS topic to send findings notifications to. This is only used if create\_sns\_topic is false.<br>If you want to send findings to an existing SNS topic, set the value of this to the ARN of the existing topic and set <br>create\_sns\_topic to false. | `string` | `null` | no |
-| id\_length\_limit | Limit `id` to this many characters.<br>Set to `0` for unlimited length.<br>Set to `null` for default, which is `0`.<br>Does not affect `id_full`. | `number` | `null` | no |
-| label\_order | The naming order of the id output and Name tag.<br>Defaults to ["namespace", "environment", "stage", "name", "attributes"].<br>You can omit any of the 5 elements, but at least one must be present. | `list(string)` | `null` | no |
-| name | Solution name, e.g. 'app' or 'jenkins' | `string` | `null` | no |
-| namespace | Namespace, which could be your organization name or abbreviation, e.g. 'eg' or 'cp' | `string` | `null` | no |
-| regex\_replace\_chars | Regex to replace chars with empty string in `namespace`, `environment`, `stage` and `name`.<br>If not set, `"/[^a-zA-Z0-9-]/"` is used to remove all characters other than hyphens, letters and digits. | `string` | `null` | no |
-| stage | Stage, e.g. 'prod', 'staging', 'dev', OR 'source', 'build', 'test', 'deploy', 'release' | `string` | `null` | no |
-| subscribers | A map of subscription configurations for SNS topics<br><br>For more information, see:<br>https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription#argument-reference<br> <br>protocol:       <br>  The protocol to use. The possible values for this are: sqs, sms, lambda, application. (http or https are partially <br>  supported, see link) (email is an option but is unsupported in terraform, see link).<br>endpoint:       <br>  The endpoint to send data to, the contents will vary with the protocol. (see link for more information)<br>endpoint\_auto\_confirms:<br>  Boolean indicating whether the end point is capable of auto confirming subscription e.g., PagerDuty. Default is <br>  false | <pre>map(object({<br>    protocol               = string<br>    endpoint               = string<br>    endpoint_auto_confirms = bool<br>  }))</pre> | `{}` | no |
-| tags | Additional tags (e.g. `map('BusinessUnit','XYZ')` | `map(string)` | `{}` | no |
+| Name                                      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Type                                                                                                                                                                                                                                                                                                                                             | Default                                                                                                                                                                                                                                                                                                    | Required |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
+| additional_tag_map                        | Additional tags for appending to tags_as_list_of_maps. Not added to `tags`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | `map(string)`                                                                                                                                                                                                                                                                                                                                    | `{}`                                                                                                                                                                                                                                                                                                       |    no    |
+| attributes                                | Additional attributes (e.g. `1`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | `list(string)`                                                                                                                                                                                                                                                                                                                                   | `[]`                                                                                                                                                                                                                                                                                                       |    no    |
+| cloudwatch_event_rule_pattern_detail_type | The detail-type pattern used to match events that will be sent to SNS. <br><br>For more information, see:<br>https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html<br>https://docs.aws.amazon.com/eventbridge/latest/userguide/event-types.html<br>https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings_cloudwatch.html                                                                                                                                                                                                                                                                                                                                                       | `string`                                                                                                                                                                                                                                                                                                                                         | `"GuardDuty Finding"`                                                                                                                                                                                                                                                                                      |    no    |
+| context                                   | Single object for setting entire context at once.<br>See description of individual variables for details.<br>Leave string and numeric variables as `null` to use default value.<br>Individual variable settings (non-null) override settings in context object,<br>except for attributes, tags, and additional_tag_map, which are merged.                                                                                                                                                                                                                                                                                                                                                                                              | <pre>object({<br> enabled = bool<br> namespace = string<br> environment = string<br> stage = string<br> name = string<br> delimiter = string<br> attributes = list(string)<br> tags = map(string)<br> additional_tag_map = map(string)<br> regex_replace_chars = string<br> label_order = list(string)<br> id_length_limit = number<br> })</pre> | <pre>{<br> "additional_tag_map": {},<br> "attributes": [],<br> "delimiter": null,<br> "enabled": true,<br> "environment": null,<br> "id_length_limit": null,<br> "label_order": [],<br> "name": null,<br> "namespace": null,<br> "regex_replace_chars": null,<br> "stage": null,<br> "tags": {}<br>}</pre> |    no    |
+| create_sns_topic                          | Flag to indicate whether an SNS topic should be created for notifications.<br>If you want to send findings to a new SNS topic, set this to true and provide a valid configuration for subscribers.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `bool`                                                                                                                                                                                                                                                                                                                                           | `false`                                                                                                                                                                                                                                                                                                    |    no    |
+| delimiter                                 | Delimiter to be used between `namespace`, `environment`, `stage`, `name` and `attributes`.<br>Defaults to `-` (hyphen). Set to `""` to use no delimiter at all.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | `string`                                                                                                                                                                                                                                                                                                                                         | `null`                                                                                                                                                                                                                                                                                                     |    no    |
+| enabled                                   | Set to false to prevent the module from creating any resources                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | `bool`                                                                                                                                                                                                                                                                                                                                           | `null`                                                                                                                                                                                                                                                                                                     |    no    |
+| environment                               | Environment, e.g. 'uw2', 'us-west-2', OR 'prod', 'staging', 'dev', 'UAT'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | `string`                                                                                                                                                                                                                                                                                                                                         | `null`                                                                                                                                                                                                                                                                                                     |    no    |
+| finding_publishing_frequency              | The frequency of notifications sent for finding occurrences. If the detector is a GuardDuty member account, the value <br>is determined by the GuardDuty master account and cannot be modified, otherwise it defaults to SIX_HOURS. <br><br>For standalone and GuardDuty master accounts, it must be configured in Terraform to enable drift detection. <br>Valid values for standalone and master accounts: FIFTEEN_MINUTES, ONE_HOUR, SIX_HOURS."<br><br>For more information, see:<br>https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings_cloudwatch.html#guardduty_findings_cloudwatch_notification_frequency                                                                                                       | `string`                                                                                                                                                                                                                                                                                                                                         | `null`                                                                                                                                                                                                                                                                                                     |    no    |
+| findings_notification_arn                 | The ARN for an SNS topic to send findings notifications to. This is only used if create_sns_topic is false.<br>If you want to send findings to an existing SNS topic, set the value of this to the ARN of the existing topic and set <br>create_sns_topic to false.                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `string`                                                                                                                                                                                                                                                                                                                                         | `null`                                                                                                                                                                                                                                                                                                     |    no    |
+| id_length_limit                           | Limit `id` to this many characters.<br>Set to `0` for unlimited length.<br>Set to `null` for default, which is `0`.<br>Does not affect `id_full`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `number`                                                                                                                                                                                                                                                                                                                                         | `null`                                                                                                                                                                                                                                                                                                     |    no    |
+| label_order                               | The naming order of the id output and Name tag.<br>Defaults to ["namespace", "environment", "stage", "name", "attributes"].<br>You can omit any of the 5 elements, but at least one must be present.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | `list(string)`                                                                                                                                                                                                                                                                                                                                   | `null`                                                                                                                                                                                                                                                                                                     |    no    |
+| name                                      | Solution name, e.g. 'app' or 'jenkins'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | `string`                                                                                                                                                                                                                                                                                                                                         | `null`                                                                                                                                                                                                                                                                                                     |    no    |
+| namespace                                 | Namespace, which could be your organization name or abbreviation, e.g. 'eg' or 'cp'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `string`                                                                                                                                                                                                                                                                                                                                         | `null`                                                                                                                                                                                                                                                                                                     |    no    |
+| regex_replace_chars                       | Regex to replace chars with empty string in `namespace`, `environment`, `stage` and `name`.<br>If not set, `"/[^a-zA-Z0-9-]/"` is used to remove all characters other than hyphens, letters and digits.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | `string`                                                                                                                                                                                                                                                                                                                                         | `null`                                                                                                                                                                                                                                                                                                     |    no    |
+| stage                                     | Stage, e.g. 'prod', 'staging', 'dev', OR 'source', 'build', 'test', 'deploy', 'release'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | `string`                                                                                                                                                                                                                                                                                                                                         | `null`                                                                                                                                                                                                                                                                                                     |    no    |
+| subscribers                               | A map of subscription configurations for SNS topics<br><br>For more information, see:<br>https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription#argument-reference<br> <br>protocol: <br> The protocol to use. The possible values for this are: sqs, sms, lambda, application. (http or https are partially <br> supported, see link) (email is an option but is unsupported in terraform, see link).<br>endpoint: <br> The endpoint to send data to, the contents will vary with the protocol. (see link for more information)<br>endpoint_auto_confirms:<br> Boolean indicating whether the end point is capable of auto confirming subscription e.g., PagerDuty. Default is <br> false | <pre>map(object({<br> protocol = string<br> endpoint = string<br> endpoint_auto_confirms = bool<br> }))</pre>                                                                                                                                                                                                                                    | `{}`                                                                                                                                                                                                                                                                                                       |    no    |
+| tags                                      | Additional tags (e.g. `map('BusinessUnit','XYZ')`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `map(string)`                                                                                                                                                                                                                                                                                                                                    | `{}`                                                                                                                                                                                                                                                                                                       |    no    |
 
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| sns\_topic | The SNS topic that was created |
-| sns\_topic\_subscriptions | The SNS topic that was created |
+| Name                    | Description                    |
+| ----------------------- | ------------------------------ |
+| sns_topic               | The SNS topic that was created |
+| sns_topic_subscriptions | The SNS topic that was created |
 
 <!-- markdownlint-restore -->
 
-
-
 ## Share the Love
 
-Like this project? Please give it a ★ on [our GitHub](https://github.com/cloudposse/terraform-aws-guard-duty)! (it helps us **a lot**)
+Like this project? Please give it a ★ on [our GitHub](https://github.com/cloudposse/terraform-aws-guardduty)! (it helps us **a lot**)
 
 Are you using this project or any of our other projects? Consider [leaving a testimonial][testimonial]. =)
-
 
 ## Related Projects
 
 Check out these related projects.
 
 - [terraform-null-label](https://github.com/cloudposse/terraform-null-label) - Terraform module designed to generate consistent names and tags for resources. Use terraform-null-label to implement a strict naming convention.
-
-
-
 
 ## References
 
@@ -171,17 +147,15 @@ For additional context, refer to some of these links.
 - [Terraform `random_integer` Resource](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) - The resource random_integer generates random values from a given range, described by the min and max attributes of a given resource.
 - [Terraform Version Pinning](https://www.terraform.io/docs/configuration/terraform.html#specifying-a-required-terraform-version) - The required_version setting can be used to constrain which versions of the Terraform CLI can be used with your configuration
 
-
 ## Help
 
 **Got a question?** We got answers.
 
-File a GitHub [issue](https://github.com/cloudposse/terraform-aws-guard-duty/issues), send us an [email][email] or join our [Slack Community][slack].
+File a GitHub [issue](https://github.com/cloudposse/terraform-aws-guardduty/issues), send us an [email][email] or join our [Slack Community][slack].
 
 [![README Commercial Support][readme_commercial_support_img]][readme_commercial_support_link]
 
 ## DevOps Accelerator for Startups
-
 
 We are a [**DevOps Accelerator**][commercial_support]. We'll help you build your cloud infrastructure from the ground up so you can own it. Then we'll show you how to operate it and stick around for as long as you need us.
 
@@ -204,7 +178,7 @@ We deliver 10x the value for a fraction of the cost of a full-time engineer. Our
 
 ## Slack Community
 
-Join our [Open Source Community][slack] on Slack. It's **FREE** for everyone! Our "SweetOps" community is where you get to talk with others who share a similar vision for how to rollout and manage infrastructure. This is the best place to talk shop, ask questions, solicit feedback, and work together as a community to build totally *sweet* infrastructure.
+Join our [Open Source Community][slack] on Slack. It's **FREE** for everyone! Our "SweetOps" community is where you get to talk with others who share a similar vision for how to rollout and manage infrastructure. This is the best place to talk shop, ask questions, solicit feedback, and work together as a community to build totally _sweet_ infrastructure.
 
 ## Discourse Forums
 
@@ -212,7 +186,7 @@ Participate in our [Discourse Forums][discourse]. Here you'll find answers to co
 
 ## Newsletter
 
-Sign up for [our newsletter][newsletter] that covers everything on our technology radar.  Receive updates on what we're up to on GitHub as well as awesome new projects we discover.
+Sign up for [our newsletter][newsletter] that covers everything on our technology radar. Receive updates on what we're up to on GitHub as well as awesome new projects we discover.
 
 ## Office Hours
 
@@ -224,7 +198,7 @@ Sign up for [our newsletter][newsletter] that covers everything on our technolog
 
 ### Bug Reports & Feature Requests
 
-Please use the [issue tracker](https://github.com/cloudposse/terraform-aws-guard-duty/issues) to report any bugs or file feature requests.
+Please use the [issue tracker](https://github.com/cloudposse/terraform-aws-guardduty/issues) to report any bugs or file feature requests.
 
 ### Developing
 
@@ -232,23 +206,17 @@ If you are interested in being a contributor and want to get involved in develop
 
 In general, PRs are welcome. We follow the typical "fork-and-pull" Git workflow.
 
- 1. **Fork** the repo on GitHub
- 2. **Clone** the project to your own machine
- 3. **Commit** changes to your own branch
- 4. **Push** your work back up to your fork
- 5. Submit a **Pull Request** so that we can review your changes
+1.  **Fork** the repo on GitHub
+2.  **Clone** the project to your own machine
+3.  **Commit** changes to your own branch
+4.  **Push** your work back up to your fork
+5.  Submit a **Pull Request** so that we can review your changes
 
 **NOTE:** Be sure to merge the latest changes from "upstream" before making a pull request!
-
-
 
 ## Copyrights
 
 Copyright © 2020-2020 [Cloud Posse, LLC](https://cloudposse.com)
-
-
-
-
 
 ## License
 
@@ -275,14 +243,6 @@ specific language governing permissions and limitations
 under the License.
 ```
 
-
-
-
-
-
-
-
-
 ## Trademarks
 
 All other trademarks referenced herein are the property of their respective owners.
@@ -293,52 +253,51 @@ This project is maintained and funded by [Cloud Posse, LLC][website]. Like it? P
 
 [![Cloud Posse][logo]][website]
 
-We're a [DevOps Professional Services][hire] company based in Los Angeles, CA. We ❤️  [Open Source Software][we_love_open_source].
+We're a [DevOps Professional Services][hire] company based in Los Angeles, CA. We ❤️ [Open Source Software][we_love_open_source].
 
 We offer [paid support][commercial_support] on all of our projects.
 
 Check out [our other projects][github], [follow us on twitter][twitter], [apply for a job][jobs], or [hire us][hire] to help with your cloud strategy and implementation.
 
-
-
 ### Contributors
 
-|  [![Erik Osterman][osterman_avatar]][osterman_homepage]<br/>[Erik Osterman][osterman_homepage] |
-|---|
+| [![Erik Osterman][osterman_avatar]][osterman_homepage]<br/>[Erik Osterman][osterman_homepage] |
+| --------------------------------------------------------------------------------------------- |
 
-  [osterman_homepage]: https://github.com/osterman
-  [osterman_avatar]: https://img.cloudposse.com/150x150/https://github.com/osterman.png
+
+[osterman_homepage]: https://github.com/osterman
+[osterman_avatar]: https://img.cloudposse.com/150x150/https://github.com/osterman.png
 
 [![README Footer][readme_footer_img]][readme_footer_link]
 [![Beacon][beacon]][website]
 
-  [logo]: https://cloudposse.com/logo-300x69.svg
-  [docs]: https://cpco.io/docs?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=docs
-  [website]: https://cpco.io/homepage?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=website
-  [github]: https://cpco.io/github?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=github
-  [jobs]: https://cpco.io/jobs?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=jobs
-  [hire]: https://cpco.io/hire?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=hire
-  [slack]: https://cpco.io/slack?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=slack
-  [linkedin]: https://cpco.io/linkedin?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=linkedin
-  [twitter]: https://cpco.io/twitter?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=twitter
-  [testimonial]: https://cpco.io/leave-testimonial?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=testimonial
-  [office_hours]: https://cloudposse.com/office-hours?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=office_hours
-  [newsletter]: https://cpco.io/newsletter?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=newsletter
-  [discourse]: https://ask.sweetops.com/?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=discourse
-  [email]: https://cpco.io/email?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=email
-  [commercial_support]: https://cpco.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=commercial_support
-  [we_love_open_source]: https://cpco.io/we-love-open-source?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=we_love_open_source
-  [terraform_modules]: https://cpco.io/terraform-modules?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=terraform_modules
-  [readme_header_img]: https://cloudposse.com/readme/header/img
-  [readme_header_link]: https://cloudposse.com/readme/header/link?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=readme_header_link
-  [readme_footer_img]: https://cloudposse.com/readme/footer/img
-  [readme_footer_link]: https://cloudposse.com/readme/footer/link?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=readme_footer_link
-  [readme_commercial_support_img]: https://cloudposse.com/readme/commercial-support/img
-  [readme_commercial_support_link]: https://cloudposse.com/readme/commercial-support/link?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guard-duty&utm_content=readme_commercial_support_link
-  [share_twitter]: https://twitter.com/intent/tweet/?text=terraform-aws-guard-duty&url=https://github.com/cloudposse/terraform-aws-guard-duty
-  [share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=terraform-aws-guard-duty&url=https://github.com/cloudposse/terraform-aws-guard-duty
-  [share_reddit]: https://reddit.com/submit/?url=https://github.com/cloudposse/terraform-aws-guard-duty
-  [share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/cloudposse/terraform-aws-guard-duty
-  [share_googleplus]: https://plus.google.com/share?url=https://github.com/cloudposse/terraform-aws-guard-duty
-  [share_email]: mailto:?subject=terraform-aws-guard-duty&body=https://github.com/cloudposse/terraform-aws-guard-duty
-  [beacon]: https://ga-beacon.cloudposse.com/UA-76589703-4/cloudposse/terraform-aws-guard-duty?pixel&cs=github&cm=readme&an=terraform-aws-guard-duty
+[logo]: https://cloudposse.com/logo-300x69.svg
+[docs]: https://cpco.io/docs?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=docs
+[website]: https://cpco.io/homepage?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=website
+[github]: https://cpco.io/github?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=github
+[jobs]: https://cpco.io/jobs?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=jobs
+[hire]: https://cpco.io/hire?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=hire
+[slack]: https://cpco.io/slack?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=slack
+[linkedin]: https://cpco.io/linkedin?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=linkedin
+[twitter]: https://cpco.io/twitter?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=twitter
+[testimonial]: https://cpco.io/leave-testimonial?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=testimonial
+[office_hours]: https://cloudposse.com/office-hours?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=office_hours
+[newsletter]: https://cpco.io/newsletter?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=newsletter
+[discourse]: https://ask.sweetops.com/?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=discourse
+[email]: https://cpco.io/email?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=email
+[commercial_support]: https://cpco.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=commercial_support
+[we_love_open_source]: https://cpco.io/we-love-open-source?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=we_love_open_source
+[terraform_modules]: https://cpco.io/terraform-modules?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=terraform_modules
+[readme_header_img]: https://cloudposse.com/readme/header/img
+[readme_header_link]: https://cloudposse.com/readme/header/link?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=readme_header_link
+[readme_footer_img]: https://cloudposse.com/readme/footer/img
+[readme_footer_link]: https://cloudposse.com/readme/footer/link?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=readme_footer_link
+[readme_commercial_support_img]: https://cloudposse.com/readme/commercial-support/img
+[readme_commercial_support_link]: https://cloudposse.com/readme/commercial-support/link?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=readme_commercial_support_link
+[share_twitter]: https://twitter.com/intent/tweet/?text=terraform-aws-guardduty&url=https://github.com/cloudposse/terraform-aws-guardduty
+[share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=terraform-aws-guardduty&url=https://github.com/cloudposse/terraform-aws-guardduty
+[share_reddit]: https://reddit.com/submit/?url=https://github.com/cloudposse/terraform-aws-guardduty
+[share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/cloudposse/terraform-aws-guardduty
+[share_googleplus]: https://plus.google.com/share?url=https://github.com/cloudposse/terraform-aws-guardduty
+[share_email]: mailto:?subject=terraform-aws-guardduty&body=https://github.com/cloudposse/terraform-aws-guardduty
+[beacon]: https://ga-beacon.cloudposse.com/UA-76589703-4/cloudposse/terraform-aws-guardduty?pixel&cs=github&cm=readme&an=terraform-aws-guardduty

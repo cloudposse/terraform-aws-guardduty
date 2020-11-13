@@ -5,7 +5,7 @@
 #
 
 # Name of this project
-name: terraform-aws-guard-duty
+name: terraform-aws-guardduty
 
 # Logo for this project
 #logo: docs/logo.png
@@ -20,13 +20,13 @@ copyrights:
     year: "2020"
 
 # Canonical GitHub repo
-github_repo: cloudposse/terraform-aws-guard-duty
+github_repo: cloudposse/terraform-aws-guardduty
 
 # Badges to display
 badges:
   - name: "Latest Release"
-    image: "https://img.shields.io/github/release/cloudposse/terraform-aws-guard-duty.svg"
-    url: "https://github.com/cloudposse/terraform-aws-guard-duty/releases/latest"
+    image: "https://img.shields.io/github/release/cloudposse/terraform-aws-guardduty.svg"
+    url: "https://github.com/cloudposse/terraform-aws-guardduty/releases/latest"
   - name: "Slack Community"
     image: "https://slack.cloudposse.com/badge.svg"
     url: "https://slack.cloudposse.com"
@@ -81,7 +81,7 @@ usage: |-
 
   ```hcl
   module "example" {
-    source = "https://github.com/cloudposse/terraform-aws-guard-duty.git?ref=master"
+    source = "https://github.com/cloudposse/terraform-aws-guardduty.git?ref=master"
     example = "Hello world!"
   }
   ```
@@ -89,7 +89,7 @@ usage: |-
 # Example usage
 examples: |-
   Here is an example of using this module:
-  - [`examples/complete`](https://github.com/cloudposse/terraform-aws-guard-duty/) - complete example of using this module
+  - [`examples/complete`](https://github.com/cloudposse/terraform-aws-guardduty/) - complete example of using this module
 
 # How to get started quickly
 #quickstart: |-

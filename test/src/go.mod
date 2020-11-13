@@ -1,4 +1,4 @@
-module github.com/cloudposse/terraform-aws-guard-duty
+module github.com/cloudposse/terraform-aws-guardduty
 
 go 1.13
 
