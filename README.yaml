@@ -68,7 +68,7 @@ references:
 
 # Short description of this project
 description: |-
-  This module enables AWS   Hub in one region of one account and optionally sets up an SNS topic to receive 
+  This module enables AWS GuardDuty in one region of one account and optionally sets up an SNS topic to receive 
   notifications of its findings.
 
 # Introduction to the project
@@ -82,14 +82,13 @@ usage: |-
   ```hcl
   module "example" {
     source = "https://github.com/cloudposse/terraform-aws-guardduty.git?ref=master"
-    example = "Hello world!"
   }
   ```
 
 # Example usage
 examples: |-
   Here is an example of using this module:
-  - [`examples/complete`](https://github.com/cloudposse/terraform-aws-guardduty/) - complete example of using this module
+  - [`examples/complete`](https://github.com/cloudposse/terraform-aws-guardduty/tree/master/examples/complete) - complete example of using this module
 
 # How to get started quickly
 #quickstart: |-
@@ -102,5 +101,5 @@ include:
 
 # Contributors to this project
 contributors:
-  - name: "Erik Osterman"
-    github: "osterman"
+  - name: "Matt Calhoun"
+    github: "mcalhoun"
