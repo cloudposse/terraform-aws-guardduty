@@ -147,8 +147,9 @@ Available targets:
 
 | Name | Description |
 |------|-------------|
-| sns\_topic | The SNS topic that was created |
-| sns\_topic\_subscriptions | The SNS topic that was created |
+| guardduty\_detector | GuardDuty detector |
+| sns\_topic | SNS topic |
+| sns\_topic\_subscriptions | SNS topic subscriptions |
 
 <!-- markdownlint-restore -->
 
