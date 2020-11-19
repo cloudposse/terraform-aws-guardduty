@@ -28,7 +28,7 @@ module "findings_label" {
   source  = "cloudposse/label/null"
   version = "0.21.0"
 
-  attributes = ["guardduty-findings"]
+  attributes = concat(module.this.attributes, ["guardduty","findings"])
   context    = module.this.context
 }
 
