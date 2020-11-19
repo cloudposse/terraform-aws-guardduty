@@ -1,10 +1,6 @@
-region = "us-east-2"
-
-namespace = "eg"
-
+region      = "us-east-2"
+namespace   = "eg"
 environment = "ue2"
+stage       = "test"
 
-stage = "test"
-
-name = "example"
-
+create_sns_topic = true
