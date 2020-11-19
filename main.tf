@@ -17,7 +17,7 @@ module "sns_topic" {
   version = "0.9.0"
   count   = local.create_sns_topic ? 1 : 0
 
-  attributes      = ["guardduty"]
+  attributes      = concat(module.this.attributes, ["guardduty"])
   subscribers     = var.subscribers
   sqs_dlq_enabled = false
 
