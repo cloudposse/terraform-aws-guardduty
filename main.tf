@@ -17,11 +17,11 @@ module "sns_topic" {
   version = "0.9.0"
   count   = local.create_sns_topic ? 1 : 0
 
-  attributes      = concat(module.this.attributes, ["guardduty"])
   subscribers     = var.subscribers
   sqs_dlq_enabled = false
 
-  context = module.this.context
+  attributes = concat(module.this.attributes, ["guardduty"])
+  context    = module.this.context
 }
 
 module "findings_label" {
