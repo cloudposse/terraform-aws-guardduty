@@ -167,6 +167,8 @@ Are you using this project or any of our other projects? Consider [leaving a tes
 Check out these related projects.
 
 - [terraform-null-label](https://github.com/cloudposse/terraform-null-label) - Terraform module designed to generate consistent names and tags for resources. Use terraform-null-label to implement a strict naming convention.
+- [terraform-aws-security-hub](https://github.com/cloudposse/terraform-aws-security-hub) - Terraform module to deploy AWS Security Hub
+- [terraform-aws-config](https://github.com/cloudposse/terraform-aws-config) - Terraform module to enable AWS Config and optionally sets up an SNS topic to receive notifications of its findings.
 
 
 

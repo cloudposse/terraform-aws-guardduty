@@ -42,6 +42,12 @@ related:
       resources. Use terraform-null-label to implement a strict naming
       convention."
     url: "https://github.com/cloudposse/terraform-null-label"
+  - name: "terraform-aws-security-hub"
+    description: "Terraform module to deploy AWS Security Hub"
+    url: "https://github.com/cloudposse/terraform-aws-security-hub"
+  - name: "terraform-aws-config"
+    description: "Terraform module to enable AWS Config and optionally sets up an SNS topic to receive notifications of its findings."
+    url: "https://github.com/cloudposse/terraform-aws-config"
 
 # List any resources helpful for someone to get started. For example, link to the hashicorp documentation or AWS documentation.
 references:
