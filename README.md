@@ -72,6 +72,15 @@ Here's how to invoke this example module in your projects
 ```hcl
 module "example" {
   source = "https://github.com/cloudposse/terraform-aws-guardduty.git?ref=master"
+
+  create_sns_topic = true
+  subscribers = {
+    opsgenie = {
+      protocol = "https"
+      endpoint = "https://api.example.com/v1/"
+      endpoint_auto_confirms = true
+    }
+  }
 }
 ```
 
