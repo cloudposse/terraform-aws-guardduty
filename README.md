@@ -148,6 +148,24 @@ Available targets:
 |------|---------|
 | aws | >= 2 |
 
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| findings_label | cloudposse/label/null | 0.24.1 |
+| sns_topic | cloudposse/sns-topic/aws | 0.16.0 |
+| this | cloudposse/label/null | 0.24.1 |
+
+## Resources
+
+| Name |
+|------|
+| [aws_cloudwatch_event_rule](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) |
+| [aws_cloudwatch_event_target](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) |
+| [aws_guardduty_detector](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector) |
+| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) |
+| [aws_sns_topic_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_policy) |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -180,7 +198,6 @@ Available targets:
 | guardduty\_detector | GuardDuty detector |
 | sns\_topic | SNS topic |
 | sns\_topic\_subscriptions | SNS topic subscriptions |
-
 <!-- markdownlint-restore -->
 
 
