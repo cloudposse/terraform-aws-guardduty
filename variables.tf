@@ -13,6 +13,7 @@ variable "subscribers" {
     protocol               = string
     endpoint               = string
     endpoint_auto_confirms = bool
+    raw_message_delivery   = bool
   }))
   description = <<-DOC
   A map of subscription configurations for SNS topics
@@ -28,6 +29,9 @@ variable "subscribers" {
   endpoint_auto_confirms:
     Boolean indicating whether the end point is capable of auto confirming subscription e.g., PagerDuty. Default is 
     false
+  raw_message_delivery:
+    Boolean indicating whether or not to enable raw message delivery (the original message is directly passed, not wrapped in JSON with the original message in the message property). 
+    Default is false
   DOC
   default     = {}
 }
