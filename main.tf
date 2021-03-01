@@ -14,7 +14,7 @@ resource "aws_guardduty_detector" "guardduty" {
 module "sns_topic" {
 
   source  = "cloudposse/sns-topic/aws"
-  version = "0.15.0"
+  version = "0.16.0"
   count   = local.create_sns_topic ? 1 : 0
 
   subscribers     = var.subscribers
