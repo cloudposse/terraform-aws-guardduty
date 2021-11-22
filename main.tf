@@ -7,7 +7,7 @@ resource "aws_guardduty_detector" "guardduty" {
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Optionally configure Event Bridge Rules and SNS subscriptions 
+# Optionally configure Event Bridge Rules and SNS subscriptions
 # https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cwe-integration-types.html
 # https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/resource-based-policies-cwe.html#sns-permissions
 #-----------------------------------------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "sns_topic_policy" {
 }
 
 resource "aws_cloudwatch_event_rule" "findings" {
-  count       = local.enable_notifications == true ? 1 : 0
+  count       = local.enable_cloudwatch == true ? 1 : 0
   name        = module.findings_label.id
   description = "GuardDuty Findings"
   tags        = module.this.tags
@@ -83,7 +83,8 @@ resource "aws_cloudwatch_event_target" "imported_findings" {
 # Locals and Data References
 #-----------------------------------------------------------------------------------------------------------------------
 locals {
-  enable_notifications      = module.this.enabled && (var.create_sns_topic || var.findings_notification_arn != null)
+  enable_cloudwatch         = module.this.enabled && var.enable_cloudwatch
+  enable_notifications      = local.enable_cloudwatch && (var.create_sns_topic || var.findings_notification_arn != null)
   create_sns_topic          = module.this.enabled && var.create_sns_topic
   findings_notification_arn = local.enable_notifications ? (var.findings_notification_arn != null ? var.findings_notification_arn : module.sns_topic[0].sns_topic.arn) : null
 }
