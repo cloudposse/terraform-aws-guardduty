@@ -2,8 +2,8 @@ variable "enable_cloudwatch" {
   description = <<-DOC
   Flag to indicate whether an CloudWatch logging should be enabled for GuardDuty
   DOC
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "cloudwatch_event_rule_pattern_detail_type" {
