@@ -83,8 +83,8 @@ resource "aws_cloudwatch_event_target" "imported_findings" {
 # Locals and Data References
 #-----------------------------------------------------------------------------------------------------------------------
 locals {
-  enable_cloudwatch         = module.this.enabled && var.enable_cloudwatch
-  enable_notifications      = local.enable_cloudwatch && (var.create_sns_topic || var.findings_notification_arn != null)
+  enable_cloudwatch         = module.this.enabled && (var.enable_cloudwatch || local.enable_notifications)
+  enable_notifications      = module.this.enabled && (var.create_sns_topic || var.findings_notification_arn != null)
   create_sns_topic          = module.this.enabled && var.create_sns_topic
   findings_notification_arn = local.enable_notifications ? (var.findings_notification_arn != null ? var.findings_notification_arn : module.sns_topic[0].sns_topic.arn) : null
 }
