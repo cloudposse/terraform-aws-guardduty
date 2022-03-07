@@ -6,6 +6,17 @@ variable "enable_cloudwatch" {
   default     = false
 }
 
+variable "enable_s3_protection" {
+  description = <<-DOC
+  Flag to indicate whether S3 bucket protection should be enabled.
+
+  For more information, see:
+  https://docs.aws.amazon.com/guardduty/latest/ug/s3-protection.html
+  DOC
+  type        = bool
+  default     = false
+}
+
 variable "cloudwatch_event_rule_pattern_detail_type" {
   description = <<-DOC
   The detail-type pattern used to match events that will be sent to SNS.

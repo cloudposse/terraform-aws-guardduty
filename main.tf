@@ -4,6 +4,12 @@
 resource "aws_guardduty_detector" "guardduty" {
   enable                       = module.this.enabled
   finding_publishing_frequency = var.finding_publishing_frequency
+
+  datasources {
+    s3_logs {
+      enable = var.enable_s3_protection
+    }
+  }
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
