@@ -12,7 +12,7 @@ resource "aws_guardduty_detector" "guardduty" {
 }
 
 resource "aws_guardduty_organization_configuration" "org_config" {
-  count = var.activate_organisation_auto_enable ? 1 : 0
+  count       = var.activate_organisation_auto_enable ? 1 : 0
   auto_enable = var.activate_organisation_auto_enable
   detector_id = aws_guardduty_detector.guardduty.id
   datasources {
