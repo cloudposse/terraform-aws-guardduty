@@ -17,6 +17,17 @@ variable "enable_s3_protection" {
   default     = false
 }
 
+variable "activate_organisation_auto_enable" {
+  description = <<-DOC
+  Activate the AWS Organization feature to automatically enable GuardDuty for new accounts.
+
+  For more information, see:
+  https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_organizations.html
+  DOC
+  type        = bool
+  default     = false
+}
+
 variable "cloudwatch_event_rule_pattern_detail_type" {
   description = <<-DOC
   The detail-type pattern used to match events that will be sent to SNS.

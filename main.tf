@@ -4,10 +4,20 @@
 resource "aws_guardduty_detector" "guardduty" {
   enable                       = module.this.enabled
   finding_publishing_frequency = var.finding_publishing_frequency
-
   datasources {
     s3_logs {
       enable = var.enable_s3_protection
+    }
+  }
+}
+
+resource "aws_guardduty_organization_configuration" "org_config" {
+  count = var.activate_organisation_auto_enable ? 1 : 0
+  auto_enable = var.activate_organisation_auto_enable
+  detector_id = aws_guardduty_detector.guardduty.id
+  datasources {
+    s3_logs {
+      auto_enable = var.enable_s3_protection
     }
   }
 }
