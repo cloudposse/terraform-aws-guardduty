@@ -81,3 +81,14 @@ variable "finding_publishing_frequency" {
   type        = string
   default     = null
 }
+
+variable "s3_protection_enabled" {
+  description = <<-DOC
+  Flag to indicate whether S3 protection will be turned on in GuardDuty.
+
+  For more information, see:
+  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector
+  DOC
+  type        = bool
+  default     = false
+}
