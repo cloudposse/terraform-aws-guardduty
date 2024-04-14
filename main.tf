@@ -13,9 +13,10 @@ resource "aws_guardduty_detector" "guardduty" {
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Optionally configure Event Bridge Rules and SNS subscriptions
+# Optionally configure Event Bridge Rules, SNS subscriptions, and GuardDuty detector features
 # https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cwe-integration-types.html
 # https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/resource-based-policies-cwe.html#sns-permissions
+# https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-features-activation-model.html#guardduty-features
 #-----------------------------------------------------------------------------------------------------------------------
 module "sns_topic" {
 
@@ -85,10 +86,27 @@ resource "aws_cloudwatch_event_target" "imported_findings" {
   arn   = local.findings_notification_arn
 }
 
+resource "aws_guardduty_detector_feature" "this" {
+  for_each = local.enable_features ? var.detector_feature : {}
+
+  detector_id = module.guardduty_delegated_detector[0].outputs.guardduty_detector_id
+  name        = each.value.feature_name
+  status      = each.value.status
+
+  dynamic "additional_configuration" {
+    for_each = each.value.additional_configuration != null ? [each.value.additional_configuration] : []
+    content {
+      name   = additional_configuration.value.addon_name
+      status = additional_configuration.value.status
+    }
+  }
+}
+
 #-----------------------------------------------------------------------------------------------------------------------
 # Locals and Data References
 #-----------------------------------------------------------------------------------------------------------------------
 locals {
+  enable_features           = var.detector_feature != null && length(var.detector_feature) > 0
   enable_cloudwatch         = module.this.enabled && (var.enable_cloudwatch || local.enable_notifications)
   enable_notifications      = module.this.enabled && (var.create_sns_topic || var.findings_notification_arn != null)
   create_sns_topic          = module.this.enabled && var.create_sns_topic
