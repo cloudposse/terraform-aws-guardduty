@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
-# Subscribe the Acccount to GuardDuty
+# Subscribe the Account to GuardDuty
 #-----------------------------------------------------------------------------------------------------------------------
 resource "aws_guardduty_detector" "guardduty" {
   enable                       = module.this.enabled
@@ -8,6 +8,18 @@ resource "aws_guardduty_detector" "guardduty" {
   datasources {
     s3_logs {
       enable = var.s3_protection_enabled
+    }
+    kubernetes {
+      audit_logs {
+        enable = var.kubernetes_audit_logs_enabled
+      }
+    }
+    malware_protection {
+      scan_ec2_instance_with_findings {
+        ebs_volumes {
+          enable = var.malware_protection_scan_ec2_ebs_volumes_enabled
+        }
+      }
     }
   }
 }
@@ -18,7 +30,6 @@ resource "aws_guardduty_detector" "guardduty" {
 # https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/resource-based-policies-cwe.html#sns-permissions
 #-----------------------------------------------------------------------------------------------------------------------
 module "sns_topic" {
-
   source  = "cloudposse/sns-topic/aws"
   version = "0.20.1"
   count   = local.create_sns_topic ? 1 : 0
