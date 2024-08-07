@@ -10,6 +10,8 @@ resource "aws_guardduty_detector" "guardduty" {
       enable = var.s3_protection_enabled
     }
   }
+
+  tags = module.this.tags
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
