@@ -9,11 +9,101 @@ resource "aws_guardduty_detector" "guardduty" {
     s3_logs {
       enable = var.s3_protection_enabled
     }
+
+    kubernetes {
+      audit_logs {
+        enable = var.kubernetes_protection_enabled
+      }
+    }
+
+    malware_protection {
+      scan_ec2_instance_with_findings {
+        ebs_volumes {
+          enable = var.malware_protection_enabled
+        }
+      }
+    }
   }
 
   tags = module.this.tags
 }
 
+#-----------------------------------------------------------------------------------------------------------------------
+# Optionally configure Runtime Monitoring for EKS, ECS Fargate or EC2
+# https://docs.aws.amazon.com/guardduty/latest/ug/enable-runtime-monitoring-standalone-acc.html
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature
+#-----------------------------------------------------------------------------------------------------------------------
+
+resource "aws_guardduty_detector_feature" "eks_runtime_monitoring" {
+  count       = var.enable_eks_runtime_monitor ? 1 : 0
+  detector_id = aws_guardduty_detector.guardduty.id
+  name        = "EKS_RUNTIME_MONITORING"
+  status      = "ENABLED"
+
+  additional_configuration {
+    name   = "EKS_ADDON_MANAGEMENT"
+    status = "ENABLED"
+  }
+}
+
+resource "aws_guardduty_detector_feature" "fargate_runtime_monitoring" {
+  count       = var.enable_fargate_runtime_monitor ? 1 : 0
+  detector_id = aws_guardduty_detector.guardduty.id
+  name        = "RUNTIME_MONITORING"
+  status      = "ENABLED"
+
+  additional_configuration {
+    name   = "ECS_FARGATE_AGENT_MANAGEMENT"
+    status = "ENABLED"
+  }
+}
+
+resource "aws_guardduty_detector_feature" "ec2_runtime_monitoring" {
+  count       = var.enable_ec2_runtime_monitor ? 1 : 0
+  detector_id = aws_guardduty_detector.guardduty.id
+  name        = "RUNTIME_MONITORING"
+  status      = "ENABLED"
+
+  additional_configuration {
+    name   = "EC2_AGENT_MANAGEMENT"
+    status = "ENABLED"
+  }
+}
+
+resource "aws_guardduty_detector_feature" "eks_audit_logs" {
+  count       = var.enable_eks_audit_logs ? 1 : 0
+  detector_id = aws_guardduty_detector.guardduty.id
+  name        = "EKS_AUDIT_LOGS"
+  status      = "ENABLED"
+}
+
+resource "aws_guardduty_detector_feature" "ebs_malware_protection" {
+  count       = var.enable_ebs_malware_protection ? 1 : 0
+  detector_id = aws_guardduty_detector.guardduty.id
+  name        = "EBS_MALWARE_PROTECTION"
+  status      = "ENABLED"
+}
+
+resource "aws_guardduty_detector_feature" "rds_login_events" {
+  count       = var.enable_rds_login_events ? 1 : 0
+  detector_id = aws_guardduty_detector.guardduty.id
+  name        = "RDS_LOGIN_EVENTS"
+  status      = "ENABLED"
+}
+
+resource "aws_guardduty_detector_feature" "lambda_network_logs" {
+  count       = var.enable_lambda_network_logs ? 1 : 0
+  detector_id = aws_guardduty_detector.guardduty.id
+  name        = "LAMBDA_NETWORK_LOGS"
+  status      = "ENABLED"
+}
+
+resource "aws_guardduty_detector_feature" "s3_data_events" {
+  count       = var.enable_s3_data_events ? 1 : 0
+  detector_id = aws_guardduty_detector.guardduty.id
+  name        = "S3_DATA_EVENTS"
+  status      = "ENABLED"
+}
 #-----------------------------------------------------------------------------------------------------------------------
 # Optionally configure Event Bridge Rules and SNS subscriptions
 # https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cwe-integration-types.html
