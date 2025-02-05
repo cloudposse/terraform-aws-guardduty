@@ -92,3 +92,113 @@ variable "s3_protection_enabled" {
   type        = bool
   default     = false
 }
+
+variable "kubernetes_protection_enabled" {
+  description = <<-DOC
+  Flag to indicate whether EKS Protection with EKS Audit Log Monitoring Configuration will be turned on in GuardDuty.
+
+  For more information, see:
+  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector
+  DOC
+  type        = bool
+  default     = false
+}
+
+variable "malware_protection_enabled" {
+  description = <<-DOC
+  Flag to indicate whether Malware Protection for EC2 will be turned on in GuardDuty.
+
+  For more information, see:
+  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector
+  DOC
+  type        = bool
+  default     = false
+}
+
+variable "enable_eks_runtime_monitor" {
+  description = <<-DOC
+  Flag to indicate whether EKS Runtime Monitoring will be enabled in GuardDuty.
+
+  For more information, see:
+  https://docs.aws.amazon.com/guardduty/latest/ug/runtime-monitoring.html
+  DOC
+  type        = bool
+  default     = false
+}
+
+variable "enable_fargate_runtime_monitor" {
+  description = <<-DOC
+  Flag to indicate whether ECS Fargate Runtime Monitoring will be enabled in GuardDuty.
+
+  For more information, see:
+  https://docs.aws.amazon.com/guardduty/latest/ug/runtime-monitoring.html
+  DOC
+  type        = bool
+  default     = false
+}
+
+variable "enable_ec2_runtime_monitor" {
+  description = <<-DOC
+  Flag to indicate whether EC2 Runtime Monitoring will be enabled in GuardDuty.
+
+  For more information, see:
+  https://docs.aws.amazon.com/guardduty/latest/ug/runtime-monitoring.html
+  DOC
+  type        = bool
+  default     = false
+}
+
+variable "enable_eks_audit_logs" {
+  description = <<-DOC
+  Flag to indicate whether EKS Audit Logs will be enabled in GuardDuty.
+
+  For more information, see:
+  https://docs.aws.amazon.com/guardduty/latest/ug/runtime-monitoring.html
+  DOC
+  type        = bool
+  default     = false
+}
+
+variable "enable_ebs_malware_protection" {
+  description = <<-DOC
+  Flag to indicate whether EKS Audit Logs will be enabled in GuardDuty.
+
+  For more information, see:
+  https://docs.aws.amazon.com/guardduty/latest/ug/runtime-monitoring.html
+  DOC
+  type        = bool
+  default     = false
+}
+
+variable "enable_rds_login_events" {
+  description = <<-DOC
+  Flag to indicate whether EKS Audit Logs will be enabled in GuardDuty.
+
+  For more information, see:
+  https://docs.aws.amazon.com/guardduty/latest/ug/runtime-monitoring.html
+  DOC
+  type        = bool
+  default     = false
+}
+
+variable "enable_lambda_network_logs" {
+  description = <<-DOC
+  Flag to indicate whether EKS Audit Logs will be enabled in GuardDuty.
+
+  For more information, see:
+  https://docs.aws.amazon.com/guardduty/latest/ug/runtime-monitoring.html
+  DOC
+  type        = bool
+  default     = false
+}
+
+variable "enable_s3_data_events" {
+  description = <<-DOC
+  Flag to indicate whether EKS Audit Logs will be enabled in GuardDuty.
+
+  For more information, see:
+  https://docs.aws.amazon.com/guardduty/latest/ug/runtime-monitoring.html
+  DOC
+  type        = bool
+  default     = false
+}
