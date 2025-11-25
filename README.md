@@ -30,8 +30,16 @@
 
 -->
 
-This module enables AWS GuardDuty in one region of one account and optionally sets up an SNS topic to receive 
-notifications of its findings.
+This module enables AWS GuardDuty in one region of one account with comprehensive threat detection features and
+optionally sets up an SNS topic to receive notifications of its findings.
+
+The module supports enabling various GuardDuty detector features including:
+- **S3 Data Events Protection** - Monitors S3 data plane operations for suspicious activity
+- **EKS Audit Logs** - Analyzes Kubernetes audit logs for threat detection in EKS clusters
+- **EBS Malware Protection** - Scans EC2 instance EBS volumes for malware
+- **Lambda Network Logs** - Monitors Lambda function network activity for threats
+- **Runtime Monitoring** - Provides threat detection for EC2, ECS, and EKS runtime environments with agent management
+- **EKS Runtime Monitoring** - Standalone EKS runtime threat detection (alternative to full Runtime Monitoring)
 
 
 > [!TIP]
@@ -46,25 +54,183 @@ notifications of its findings.
 > </detalis>
 
 
+## Introduction
 
+## Features
+
+This module provides comprehensive AWS GuardDuty configuration with support for all major detector features:
+
+### Threat Detection Features
+
+- **S3 Data Events Protection** (`s3_protection_enabled`)
+  - Monitors S3 bucket data plane operations (GetObject, PutObject, DeleteObject, etc.)
+  - Detects suspicious access patterns and potential data exfiltration attempts
+
+- **EKS Audit Logs** (`kubernetes_audit_logs_enabled`)
+  - Analyzes Kubernetes API server audit logs for EKS clusters
+  - Identifies suspicious kubectl commands, unauthorized access, and privilege escalation attempts
+
+- **EBS Malware Protection** (`malware_protection_scan_ec2_ebs_volumes_enabled`)
+  - Scans EBS volumes attached to EC2 instances for malware
+  - Agentless malware detection using snapshots
+
+- **Lambda Network Logs** (`lambda_network_logs_enabled`)
+  - Monitors Lambda function network connections
+  - Detects connections to known malicious IPs or unexpected network behavior
+
+- **Runtime Monitoring** (`runtime_monitoring_enabled`)
+  - Provides comprehensive runtime threat detection for EC2, ECS, and EKS resources
+  - Monitors runtime activity including file access, process execution, and network connections
+  - Supports automatic agent management for EKS add-ons, ECS Fargate, and EC2 instances
+  - **Note**: Runtime Monitoring already includes EKS protection; do not enable both `runtime_monitoring_enabled` and `eks_runtime_monitoring_enabled`
+
+- **EKS Runtime Monitoring** (`eks_runtime_monitoring_enabled`)
+  - Standalone EKS-only runtime monitoring (use when you only need EKS protection)
+  - Lighter alternative to full Runtime Monitoring
+  - Automatically manages EKS security agent add-ons
+
+### SNS and CloudWatch Integration
+
+- Optional SNS topic creation for findings notifications
+- CloudWatch Events integration for real-time alerting
+- Configurable finding publishing frequency (FIFTEEN_MINUTES, ONE_HOUR, SIX_HOURS)
+- Support for multiple SNS subscribers (SQS, Lambda, HTTPS endpoints, etc.)
+
+### Important Notes
+
+- **RDS Login Events** can only be configured at the organization level via `aws_guardduty_organization_configuration_feature`, not at the detector level
+- **Runtime Monitoring vs EKS Runtime Monitoring**: These are mutually exclusive. Runtime Monitoring provides broader coverage (EC2, ECS, EKS), while EKS Runtime Monitoring is EKS-specific
+- All detector features use the newer `aws_guardduty_detector_feature` resource instead of the deprecated `datasources` block
+
+
+> [!TIP]
+> #### Use Terraform Reference Architectures for AWS
+>
+> Use Cloud Posse's ready-to-go [terraform architecture blueprints](https://cloudposse.com/reference-architecture/) for AWS to get up and running quickly.
+>
+> ✅ We build it together with your team.<br/>
+> ✅ Your team owns everything.<br/>
+> ✅ 100% Open Source and backed by fanatical support.<br/>
+>
+> <a href="https://cpco.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=commercial_support"><img alt="Request Quote" src="https://img.shields.io/badge/request%20quote-success.svg?style=for-the-badge"/></a>
+> <details><summary>📚 <strong>Learn More</strong></summary>
+>
+> <br/>
+>
+> Cloud Posse is the leading [**DevOps Accelerator**](https://cpco.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=commercial_support) for funded startups and enterprises.
+>
+> *Your team can operate like a pro today.*
+>
+> Ensure that your team succeeds by using Cloud Posse's proven process and turnkey blueprints. Plus, we stick around until you succeed.
+> #### Day-0:  Your Foundation for Success
+> - **Reference Architecture.** You'll get everything you need from the ground up built using 100% infrastructure as code.
+> - **Deployment Strategy.** Adopt a proven deployment strategy with GitHub Actions, enabling automated, repeatable, and reliable software releases.
+> - **Site Reliability Engineering.** Gain total visibility into your applications and services with Datadog, ensuring high availability and performance.
+> - **Security Baseline.** Establish a secure environment from the start, with built-in governance, accountability, and comprehensive audit logs, safeguarding your operations.
+> - **GitOps.** Empower your team to manage infrastructure changes confidently and efficiently through Pull Requests, leveraging the full power of GitHub Actions.
+>
+> <a href="https://cpco.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=commercial_support"><img alt="Request Quote" src="https://img.shields.io/badge/request%20quote-success.svg?style=for-the-badge"/></a>
+>
+> #### Day-2: Your Operational Mastery
+> - **Training.** Equip your team with the knowledge and skills to confidently manage the infrastructure, ensuring long-term success and self-sufficiency.
+> - **Support.** Benefit from a seamless communication over Slack with our experts, ensuring you have the support you need, whenever you need it.
+> - **Troubleshooting.** Access expert assistance to quickly resolve any operational challenges, minimizing downtime and maintaining business continuity.
+> - **Code Reviews.** Enhance your team’s code quality with our expert feedback, fostering continuous improvement and collaboration.
+> - **Bug Fixes.** Rely on our team to troubleshoot and resolve any issues, ensuring your systems run smoothly.
+> - **Migration Assistance.** Accelerate your migration process with our dedicated support, minimizing disruption and speeding up time-to-value.
+> - **Customer Workshops.** Engage with our team in weekly workshops, gaining insights and strategies to continuously improve and innovate.
+>
+> <a href="https://cpco.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=commercial_support"><img alt="Request Quote" src="https://img.shields.io/badge/request%20quote-success.svg?style=for-the-badge"/></a>
+> 
+</details>
 
 
 ## Usage
 
-Here's how to invoke this example module in your projects
+Here's how to invoke this module in your projects
+
+### Basic Example
 
 ```hcl
-module "example" {
-  source = "https://github.com/cloudposse/terraform-aws-guardduty.git?ref=master"
+module "guardduty" {
+  source = "cloudposse/guardduty/aws"
+  # version = "x.x.x"
 
   create_sns_topic = true
   subscribers = {
     opsgenie = {
-      protocol = "https"
-      endpoint = "https://api.example.com/v1/"
+      protocol               = "https"
+      endpoint               = "https://api.example.com/v1/"
       endpoint_auto_confirms = true
+      raw_message_delivery   = false
     }
   }
+
+  context = module.this.context
+}
+```
+
+### Complete Example with All Features Enabled
+
+```hcl
+module "guardduty" {
+  source = "cloudposse/guardduty/aws"
+  # version = "x.x.x"
+
+  # SNS and CloudWatch configuration
+  create_sns_topic                          = true
+  enable_cloudwatch                         = true
+  cloudwatch_event_rule_pattern_detail_type = "GuardDuty Finding"
+  finding_publishing_frequency              = "FIFTEEN_MINUTES"
+
+  subscribers = {
+    opsgenie = {
+      protocol               = "https"
+      endpoint               = "https://api.example.com/v1/"
+      endpoint_auto_confirms = true
+      raw_message_delivery   = false
+    }
+  }
+
+  # GuardDuty detector features
+  s3_protection_enabled                           = true
+  kubernetes_audit_logs_enabled                   = true
+  malware_protection_scan_ec2_ebs_volumes_enabled = true
+  lambda_network_logs_enabled                     = true
+
+  # Runtime Monitoring with all agent management features
+  runtime_monitoring_enabled = true
+  runtime_monitoring_additional_config = {
+    eks_addon_management_enabled         = true
+    ecs_fargate_agent_management_enabled = true
+    ec2_agent_management_enabled         = true
+  }
+
+  # Note: Do not enable both runtime_monitoring_enabled and eks_runtime_monitoring_enabled
+  # Runtime Monitoring already includes EKS protection
+  eks_runtime_monitoring_enabled = false
+
+  context = module.this.context
+}
+```
+
+### Example with EKS Runtime Monitoring Only
+
+```hcl
+module "guardduty" {
+  source = "cloudposse/guardduty/aws"
+  # version = "x.x.x"
+
+  # If you only need EKS runtime monitoring (not EC2/ECS)
+  eks_runtime_monitoring_enabled = true
+  runtime_monitoring_additional_config = {
+    eks_addon_management_enabled = true
+  }
+
+  # Do not enable runtime_monitoring_enabled when using eks_runtime_monitoring_enabled
+  runtime_monitoring_enabled = false
+
+  context = module.this.context
 }
 ```
 
@@ -115,6 +281,12 @@ Here is an example of using this module:
 | [aws_cloudwatch_event_rule.findings](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_target.imported_findings](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_guardduty_detector.guardduty](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector) | resource |
+| [aws_guardduty_detector_feature.ebs_malware_protection](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature) | resource |
+| [aws_guardduty_detector_feature.eks_audit_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature) | resource |
+| [aws_guardduty_detector_feature.eks_runtime_monitoring](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature) | resource |
+| [aws_guardduty_detector_feature.lambda_network_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature) | resource |
+| [aws_guardduty_detector_feature.runtime_monitoring](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature) | resource |
+| [aws_guardduty_detector_feature.s3_data_events](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature) | resource |
 | [aws_sns_topic_policy.sns_topic_publish_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_policy) | resource |
 | [aws_iam_policy_document.sns_topic_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 
@@ -129,19 +301,25 @@ Here is an example of using this module:
 | <a name="input_create_sns_topic"></a> [create\_sns\_topic](#input\_create\_sns\_topic) | Flag to indicate whether an SNS topic should be created for notifications.<br/>If you want to send findings to a new SNS topic, set this to true and provide a valid configuration for subscribers. | `bool` | `false` | no |
 | <a name="input_delimiter"></a> [delimiter](#input\_delimiter) | Delimiter to be used between ID elements.<br/>Defaults to `-` (hyphen). Set to `""` to use no delimiter at all. | `string` | `null` | no |
 | <a name="input_descriptor_formats"></a> [descriptor\_formats](#input\_descriptor\_formats) | Describe additional descriptors to be output in the `descriptors` output map.<br/>Map of maps. Keys are names of descriptors. Values are maps of the form<br/>`{<br/>   format = string<br/>   labels = list(string)<br/>}`<br/>(Type is `any` so the map values can later be enhanced to provide additional options.)<br/>`format` is a Terraform format string to be passed to the `format()` function.<br/>`labels` is a list of labels, in order, to pass to `format()` function.<br/>Label values will be normalized before being passed to `format()` so they will be<br/>identical to how they appear in `id`.<br/>Default is `{}` (`descriptors` output will be empty). | `any` | `{}` | no |
+| <a name="input_eks_runtime_monitoring_enabled"></a> [eks\_runtime\_monitoring\_enabled](#input\_eks\_runtime\_monitoring\_enabled) | If `true`, enables EKS Runtime Monitoring.<br/>Note: Do not enable both EKS\_RUNTIME\_MONITORING and RUNTIME\_MONITORING as Runtime Monitoring already includes<br/>threat detection for Amazon EKS resources.<br/><br/>For more information, see:<br/>https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature | `bool` | `false` | no |
 | <a name="input_enable_cloudwatch"></a> [enable\_cloudwatch](#input\_enable\_cloudwatch) | Flag to indicate whether an CloudWatch logging should be enabled for GuardDuty | `bool` | `false` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Set to false to prevent the module from creating any resources | `bool` | `null` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | ID element. Usually used for region e.g. 'uw2', 'us-west-2', OR role 'prod', 'staging', 'dev', 'UAT' | `string` | `null` | no |
 | <a name="input_finding_publishing_frequency"></a> [finding\_publishing\_frequency](#input\_finding\_publishing\_frequency) | The frequency of notifications sent for finding occurrences. If the detector is a GuardDuty member account, the value<br/>is determined by the GuardDuty master account and cannot be modified, otherwise it defaults to SIX\_HOURS.<br/><br/>For standalone and GuardDuty master accounts, it must be configured in Terraform to enable drift detection.<br/>Valid values for standalone and master accounts: FIFTEEN\_MINUTES, ONE\_HOUR, SIX\_HOURS."<br/><br/>For more information, see:<br/>https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_findings_cloudwatch.html#guardduty_findings_cloudwatch_notification_frequency | `string` | `null` | no |
 | <a name="input_findings_notification_arn"></a> [findings\_notification\_arn](#input\_findings\_notification\_arn) | The ARN for an SNS topic to send findings notifications to. This is only used if create\_sns\_topic is false.<br/>If you want to send findings to an existing SNS topic, set the value of this to the ARN of the existing topic and set<br/>create\_sns\_topic to false. | `string` | `null` | no |
 | <a name="input_id_length_limit"></a> [id\_length\_limit](#input\_id\_length\_limit) | Limit `id` to this many characters (minimum 6).<br/>Set to `0` for unlimited length.<br/>Set to `null` for keep the existing setting, which defaults to `0`.<br/>Does not affect `id_full`. | `number` | `null` | no |
+| <a name="input_kubernetes_audit_logs_enabled"></a> [kubernetes\_audit\_logs\_enabled](#input\_kubernetes\_audit\_logs\_enabled) | If `true`, enables Kubernetes audit logs as a data source for Kubernetes protection.<br/><br/>For more information, see:<br/>https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature | `bool` | `false` | no |
 | <a name="input_label_key_case"></a> [label\_key\_case](#input\_label\_key\_case) | Controls the letter case of the `tags` keys (label names) for tags generated by this module.<br/>Does not affect keys of tags passed in via the `tags` input.<br/>Possible values: `lower`, `title`, `upper`.<br/>Default value: `title`. | `string` | `null` | no |
 | <a name="input_label_order"></a> [label\_order](#input\_label\_order) | The order in which the labels (ID elements) appear in the `id`.<br/>Defaults to ["namespace", "environment", "stage", "name", "attributes"].<br/>You can omit any of the 6 labels ("tenant" is the 6th), but at least one must be present. | `list(string)` | `null` | no |
 | <a name="input_label_value_case"></a> [label\_value\_case](#input\_label\_value\_case) | Controls the letter case of ID elements (labels) as included in `id`,<br/>set as tag values, and output by this module individually.<br/>Does not affect values of tags passed in via the `tags` input.<br/>Possible values: `lower`, `title`, `upper` and `none` (no transformation).<br/>Set this to `title` and set `delimiter` to `""` to yield Pascal Case IDs.<br/>Default value: `lower`. | `string` | `null` | no |
 | <a name="input_labels_as_tags"></a> [labels\_as\_tags](#input\_labels\_as\_tags) | Set of labels (ID elements) to include as tags in the `tags` output.<br/>Default is to include all labels.<br/>Tags with empty values will not be included in the `tags` output.<br/>Set to `[]` to suppress all generated tags.<br/>**Notes:**<br/>  The value of the `name` tag, if included, will be the `id`, not the `name`.<br/>  Unlike other `null-label` inputs, the initial setting of `labels_as_tags` cannot be<br/>  changed in later chained modules. Attempts to change it will be silently ignored. | `set(string)` | <pre>[<br/>  "default"<br/>]</pre> | no |
+| <a name="input_lambda_network_logs_enabled"></a> [lambda\_network\_logs\_enabled](#input\_lambda\_network\_logs\_enabled) | If `true`, enables Lambda network logs as a data source for Lambda protection.<br/><br/>For more information, see:<br/>https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature | `bool` | `false` | no |
+| <a name="input_malware_protection_scan_ec2_ebs_volumes_enabled"></a> [malware\_protection\_scan\_ec2\_ebs\_volumes\_enabled](#input\_malware\_protection\_scan\_ec2\_ebs\_volumes\_enabled) | Configure whether Malware Protection is enabled as data source for EC2 instances EBS Volumes in GuardDuty.<br/><br/>For more information, see:<br/>https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature | `bool` | `false` | no |
 | <a name="input_name"></a> [name](#input\_name) | ID element. Usually the component or solution name, e.g. 'app' or 'jenkins'.<br/>This is the only ID element not also included as a `tag`.<br/>The "name" tag is set to the full `id` string. There is no tag with the value of the `name` input. | `string` | `null` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | ID element. Usually an abbreviation of your organization name, e.g. 'eg' or 'cp', to help ensure generated IDs are globally unique | `string` | `null` | no |
 | <a name="input_regex_replace_chars"></a> [regex\_replace\_chars](#input\_regex\_replace\_chars) | Terraform regular expression (regex) string.<br/>Characters matching the regex will be removed from the ID elements.<br/>If not set, `"/[^a-zA-Z0-9-]/"` is used to remove all characters other than hyphens, letters and digits. | `string` | `null` | no |
+| <a name="input_runtime_monitoring_additional_config"></a> [runtime\_monitoring\_additional\_config](#input\_runtime\_monitoring\_additional\_config) | Additional configuration for Runtime Monitoring features.<br/><br/>eks\_addon\_management\_enabled: Enable EKS add-on management<br/>ecs\_fargate\_agent\_management\_enabled: Enable ECS Fargate agent management<br/>ec2\_agent\_management\_enabled: Enable EC2 agent management<br/><br/>For more information, see:<br/>https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature#additional_configuration | <pre>object({<br/>    eks_addon_management_enabled         = optional(bool, false)<br/>    ecs_fargate_agent_management_enabled = optional(bool, false)<br/>    ec2_agent_management_enabled         = optional(bool, false)<br/>  })</pre> | `{}` | no |
+| <a name="input_runtime_monitoring_enabled"></a> [runtime\_monitoring\_enabled](#input\_runtime\_monitoring\_enabled) | If `true`, enables Runtime Monitoring for EC2, ECS, and EKS resources.<br/>Note: Runtime Monitoring already includes threat detection for Amazon EKS resources, so you should not enable both<br/>RUNTIME\_MONITORING and EKS\_RUNTIME\_MONITORING features.<br/><br/>For more information, see:<br/>https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature | `bool` | `false` | no |
 | <a name="input_s3_protection_enabled"></a> [s3\_protection\_enabled](#input\_s3\_protection\_enabled) | Flag to indicate whether S3 protection will be turned on in GuardDuty.<br/><br/>For more information, see:<br/>https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector | `bool` | `false` | no |
 | <a name="input_stage"></a> [stage](#input\_stage) | ID element. Usually used to indicate role, e.g. 'prod', 'staging', 'source', 'build', 'test', 'deploy', 'release' | `string` | `null` | no |
 | <a name="input_subscribers"></a> [subscribers](#input\_subscribers) | A map of subscription configurations for SNS topics<br/><br/>For more information, see:<br/>https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription#argument-reference<br/><br/>protocol:<br/>  The protocol to use. The possible values for this are: sqs, sms, lambda, application. (http or https are partially<br/>  supported, see link) (email is an option but is unsupported in terraform, see link).<br/>endpoint:<br/>  The endpoint to send data to, the contents will vary with the protocol. (see link for more information)<br/>endpoint\_auto\_confirms:<br/>  Boolean indicating whether the end point is capable of auto confirming subscription e.g., PagerDuty. Default is<br/>  false<br/>raw\_message\_delivery:<br/>  Boolean indicating whether or not to enable raw message delivery (the original message is directly passed, not wrapped in JSON with the original message in the message property).<br/>  Default is false | <pre>map(object({<br/>    protocol               = string<br/>    endpoint               = string<br/>    endpoint_auto_confirms = bool<br/>    raw_message_delivery   = bool<br/>  }))</pre> | `{}` | no |
@@ -176,53 +354,15 @@ Check out these related projects.
 
 For additional context, refer to some of these links.
 
-- [Terraform Standard Module Structure](https://www.terraform.io/docs/modules/index.html#standard-module-structure) - HashiCorp's standard module structure is a file and directory layout we recommend for reusable modules distributed in separate repositories.
-- [Terraform Module Requirements](https://www.terraform.io/docs/registry/modules/publish.html#requirements) - HashiCorp's guidance on all the requirements for publishing a module. Meeting the requirements for publishing a module is extremely easy.
-- [Terraform `random_integer` Resource](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) - The resource random_integer generates random values from a given range, described by the min and max attributes of a given resource.
-- [Terraform Version Pinning](https://www.terraform.io/docs/configuration/terraform.html#specifying-a-required-terraform-version) - The required_version setting can be used to constrain which versions of the Terraform CLI can be used with your configuration
+- [AWS GuardDuty Documentation](https://docs.aws.amazon.com/guardduty/) - Official AWS GuardDuty documentation
+- [AWS GuardDuty Detector Features](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-features-activation-model.html) - GuardDuty features activation model and available detector features
+- [Terraform aws_guardduty_detector Resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector) - Terraform resource for managing GuardDuty detectors
+- [Terraform aws_guardduty_detector_feature Resource](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature) - Terraform resource for configuring GuardDuty detector features
+- [GuardDuty Finding Types](https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-active.html) - Complete list of GuardDuty finding types
+- [GuardDuty Runtime Monitoring](https://docs.aws.amazon.com/guardduty/latest/ug/runtime-monitoring.html) - Runtime Monitoring for threat detection in EC2, ECS, and EKS resources
 
 
 
-> [!TIP]
-> #### Use Terraform Reference Architectures for AWS
->
-> Use Cloud Posse's ready-to-go [terraform architecture blueprints](https://cloudposse.com/reference-architecture/) for AWS to get up and running quickly.
->
-> ✅ We build it together with your team.<br/>
-> ✅ Your team owns everything.<br/>
-> ✅ 100% Open Source and backed by fanatical support.<br/>
->
-> <a href="https://cpco.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=commercial_support"><img alt="Request Quote" src="https://img.shields.io/badge/request%20quote-success.svg?style=for-the-badge"/></a>
-> <details><summary>📚 <strong>Learn More</strong></summary>
->
-> <br/>
->
-> Cloud Posse is the leading [**DevOps Accelerator**](https://cpco.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=commercial_support) for funded startups and enterprises.
->
-> *Your team can operate like a pro today.*
->
-> Ensure that your team succeeds by using Cloud Posse's proven process and turnkey blueprints. Plus, we stick around until you succeed.
-> #### Day-0:  Your Foundation for Success
-> - **Reference Architecture.** You'll get everything you need from the ground up built using 100% infrastructure as code.
-> - **Deployment Strategy.** Adopt a proven deployment strategy with GitHub Actions, enabling automated, repeatable, and reliable software releases.
-> - **Site Reliability Engineering.** Gain total visibility into your applications and services with Datadog, ensuring high availability and performance.
-> - **Security Baseline.** Establish a secure environment from the start, with built-in governance, accountability, and comprehensive audit logs, safeguarding your operations.
-> - **GitOps.** Empower your team to manage infrastructure changes confidently and efficiently through Pull Requests, leveraging the full power of GitHub Actions.
->
-> <a href="https://cpco.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=commercial_support"><img alt="Request Quote" src="https://img.shields.io/badge/request%20quote-success.svg?style=for-the-badge"/></a>
->
-> #### Day-2: Your Operational Mastery
-> - **Training.** Equip your team with the knowledge and skills to confidently manage the infrastructure, ensuring long-term success and self-sufficiency.
-> - **Support.** Benefit from a seamless communication over Slack with our experts, ensuring you have the support you need, whenever you need it.
-> - **Troubleshooting.** Access expert assistance to quickly resolve any operational challenges, minimizing downtime and maintaining business continuity.
-> - **Code Reviews.** Enhance your team’s code quality with our expert feedback, fostering continuous improvement and collaboration.
-> - **Bug Fixes.** Rely on our team to troubleshoot and resolve any issues, ensuring your systems run smoothly.
-> - **Migration Assistance.** Accelerate your migration process with our dedicated support, minimizing disruption and speeding up time-to-value.
-> - **Customer Workshops.** Engage with our team in weekly workshops, gaining insights and strategies to continuously improve and innovate.
->
-> <a href="https://cpco.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudposse/terraform-aws-guardduty&utm_content=commercial_support"><img alt="Request Quote" src="https://img.shields.io/badge/request%20quote-success.svg?style=for-the-badge"/></a>
-> 
-</details>
 
 ## ✨ Contributing
 

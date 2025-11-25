@@ -47,44 +47,172 @@ related:
 
 # List any resources helpful for someone to get started. For example, link to the hashicorp documentation or AWS documentation.
 references:
-  - name: "Terraform Standard Module Structure"
-    description: "HashiCorp's standard module structure is a file and directory layout we recommend for reusable modules distributed in separate repositories."
-    url: "https://www.terraform.io/docs/modules/index.html#standard-module-structure"
-  - name: "Terraform Module Requirements"
-    description: "HashiCorp's guidance on all the requirements for publishing a module. Meeting the requirements for publishing a module is extremely easy."
-    url: "https://www.terraform.io/docs/registry/modules/publish.html#requirements"
-  - name: "Terraform `random_integer` Resource"
-    description: "The resource random_integer generates random values from a given range, described by the min and max attributes of a given resource."
-    url: "https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer"
-  - name: "Terraform Version Pinning"
-    description: "The required_version setting can be used to constrain which versions of the Terraform CLI can be used with your configuration"
-    url: "https://www.terraform.io/docs/configuration/terraform.html#specifying-a-required-terraform-version"
+  - name: "AWS GuardDuty Documentation"
+    description: "Official AWS GuardDuty documentation"
+    url: "https://docs.aws.amazon.com/guardduty/"
+  - name: "AWS GuardDuty Detector Features"
+    description: "GuardDuty features activation model and available detector features"
+    url: "https://docs.aws.amazon.com/guardduty/latest/ug/guardduty-features-activation-model.html"
+  - name: "Terraform aws_guardduty_detector Resource"
+    description: "Terraform resource for managing GuardDuty detectors"
+    url: "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector"
+  - name: "Terraform aws_guardduty_detector_feature Resource"
+    description: "Terraform resource for configuring GuardDuty detector features"
+    url: "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature"
+  - name: "GuardDuty Finding Types"
+    description: "Complete list of GuardDuty finding types"
+    url: "https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-active.html"
+  - name: "GuardDuty Runtime Monitoring"
+    description: "Runtime Monitoring for threat detection in EC2, ECS, and EKS resources"
+    url: "https://docs.aws.amazon.com/guardduty/latest/ug/runtime-monitoring.html"
 
 # Short description of this project
 description: |-
-  This module enables AWS GuardDuty in one region of one account and optionally sets up an SNS topic to receive 
-  notifications of its findings.
+  This module enables AWS GuardDuty in one region of one account with comprehensive threat detection features and
+  optionally sets up an SNS topic to receive notifications of its findings.
+
+  The module supports enabling various GuardDuty detector features including:
+  - **S3 Data Events Protection** - Monitors S3 data plane operations for suspicious activity
+  - **EKS Audit Logs** - Analyzes Kubernetes audit logs for threat detection in EKS clusters
+  - **EBS Malware Protection** - Scans EC2 instance EBS volumes for malware
+  - **Lambda Network Logs** - Monitors Lambda function network activity for threats
+  - **Runtime Monitoring** - Provides threat detection for EC2, ECS, and EKS runtime environments with agent management
+  - **EKS Runtime Monitoring** - Standalone EKS runtime threat detection (alternative to full Runtime Monitoring)
 
 # Introduction to the project
-#introduction: |-
-#  This is an introduction.
+introduction: |-
+  ## Features
+
+  This module provides comprehensive AWS GuardDuty configuration with support for all major detector features:
+
+  ### Threat Detection Features
+
+  - **S3 Data Events Protection** (`s3_protection_enabled`)
+    - Monitors S3 bucket data plane operations (GetObject, PutObject, DeleteObject, etc.)
+    - Detects suspicious access patterns and potential data exfiltration attempts
+
+  - **EKS Audit Logs** (`kubernetes_audit_logs_enabled`)
+    - Analyzes Kubernetes API server audit logs for EKS clusters
+    - Identifies suspicious kubectl commands, unauthorized access, and privilege escalation attempts
+
+  - **EBS Malware Protection** (`malware_protection_scan_ec2_ebs_volumes_enabled`)
+    - Scans EBS volumes attached to EC2 instances for malware
+    - Agentless malware detection using snapshots
+
+  - **Lambda Network Logs** (`lambda_network_logs_enabled`)
+    - Monitors Lambda function network connections
+    - Detects connections to known malicious IPs or unexpected network behavior
+
+  - **Runtime Monitoring** (`runtime_monitoring_enabled`)
+    - Provides comprehensive runtime threat detection for EC2, ECS, and EKS resources
+    - Monitors runtime activity including file access, process execution, and network connections
+    - Supports automatic agent management for EKS add-ons, ECS Fargate, and EC2 instances
+    - **Note**: Runtime Monitoring already includes EKS protection; do not enable both `runtime_monitoring_enabled` and `eks_runtime_monitoring_enabled`
+
+  - **EKS Runtime Monitoring** (`eks_runtime_monitoring_enabled`)
+    - Standalone EKS-only runtime monitoring (use when you only need EKS protection)
+    - Lighter alternative to full Runtime Monitoring
+    - Automatically manages EKS security agent add-ons
+
+  ### SNS and CloudWatch Integration
+
+  - Optional SNS topic creation for findings notifications
+  - CloudWatch Events integration for real-time alerting
+  - Configurable finding publishing frequency (FIFTEEN_MINUTES, ONE_HOUR, SIX_HOURS)
+  - Support for multiple SNS subscribers (SQS, Lambda, HTTPS endpoints, etc.)
+
+  ### Important Notes
+
+  - **RDS Login Events** can only be configured at the organization level via `aws_guardduty_organization_configuration_feature`, not at the detector level
+  - **Runtime Monitoring vs EKS Runtime Monitoring**: These are mutually exclusive. Runtime Monitoring provides broader coverage (EC2, ECS, EKS), while EKS Runtime Monitoring is EKS-specific
+  - All detector features use the newer `aws_guardduty_detector_feature` resource instead of the deprecated `datasources` block
 
 # How to use this module. Should be an easy example to copy and paste.
 usage: |-
-  Here's how to invoke this example module in your projects
+  Here's how to invoke this module in your projects
+
+  ### Basic Example
 
   ```hcl
-  module "example" {
-    source = "https://github.com/cloudposse/terraform-aws-guardduty.git?ref=master"
+  module "guardduty" {
+    source = "cloudposse/guardduty/aws"
+    # version = "x.x.x"
 
     create_sns_topic = true
     subscribers = {
       opsgenie = {
-        protocol = "https"
-        endpoint = "https://api.example.com/v1/"
+        protocol               = "https"
+        endpoint               = "https://api.example.com/v1/"
         endpoint_auto_confirms = true
+        raw_message_delivery   = false
       }
     }
+
+    context = module.this.context
+  }
+  ```
+
+  ### Complete Example with All Features Enabled
+
+  ```hcl
+  module "guardduty" {
+    source = "cloudposse/guardduty/aws"
+    # version = "x.x.x"
+
+    # SNS and CloudWatch configuration
+    create_sns_topic                          = true
+    enable_cloudwatch                         = true
+    cloudwatch_event_rule_pattern_detail_type = "GuardDuty Finding"
+    finding_publishing_frequency              = "FIFTEEN_MINUTES"
+
+    subscribers = {
+      opsgenie = {
+        protocol               = "https"
+        endpoint               = "https://api.example.com/v1/"
+        endpoint_auto_confirms = true
+        raw_message_delivery   = false
+      }
+    }
+
+    # GuardDuty detector features
+    s3_protection_enabled                           = true
+    kubernetes_audit_logs_enabled                   = true
+    malware_protection_scan_ec2_ebs_volumes_enabled = true
+    lambda_network_logs_enabled                     = true
+
+    # Runtime Monitoring with all agent management features
+    runtime_monitoring_enabled = true
+    runtime_monitoring_additional_config = {
+      eks_addon_management_enabled         = true
+      ecs_fargate_agent_management_enabled = true
+      ec2_agent_management_enabled         = true
+    }
+
+    # Note: Do not enable both runtime_monitoring_enabled and eks_runtime_monitoring_enabled
+    # Runtime Monitoring already includes EKS protection
+    eks_runtime_monitoring_enabled = false
+
+    context = module.this.context
+  }
+  ```
+
+  ### Example with EKS Runtime Monitoring Only
+
+  ```hcl
+  module "guardduty" {
+    source = "cloudposse/guardduty/aws"
+    # version = "x.x.x"
+
+    # If you only need EKS runtime monitoring (not EC2/ECS)
+    eks_runtime_monitoring_enabled = true
+    runtime_monitoring_additional_config = {
+      eks_addon_management_enabled = true
+    }
+
+    # Do not enable runtime_monitoring_enabled when using eks_runtime_monitoring_enabled
+    runtime_monitoring_enabled = false
+
+    context = module.this.context
   }
   ```
 
