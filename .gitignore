@@ -5,6 +5,7 @@
 *.tfstate
 *.tfstate.*
 .terraform
+.terraform.lock.hcl
 .terraform.tfstate.lock.info
 
 **/.idea
