@@ -92,3 +92,82 @@ variable "s3_protection_enabled" {
   type        = bool
   default     = false
 }
+
+variable "kubernetes_audit_logs_enabled" {
+  type        = bool
+  default     = false
+  description = <<-DOC
+  If `true`, enables Kubernetes audit logs as a data source for Kubernetes protection.
+
+  For more information, see:
+  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature
+  DOC
+}
+
+variable "malware_protection_scan_ec2_ebs_volumes_enabled" {
+  type        = bool
+  default     = false
+  description = <<-DOC
+  Configure whether Malware Protection is enabled as data source for EC2 instances EBS Volumes in GuardDuty.
+
+  For more information, see:
+  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature
+  DOC
+}
+
+variable "lambda_network_logs_enabled" {
+  type        = bool
+  default     = false
+  description = <<-DOC
+  If `true`, enables Lambda network logs as a data source for Lambda protection.
+
+  For more information, see:
+  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature
+  DOC
+}
+
+variable "runtime_monitoring_enabled" {
+  type        = bool
+  default     = false
+  description = <<-DOC
+  If `true`, enables Runtime Monitoring for EC2, ECS, and EKS resources.
+  Note: Runtime Monitoring already includes threat detection for Amazon EKS resources, so you should not enable both
+  RUNTIME_MONITORING and EKS_RUNTIME_MONITORING features.
+
+  For more information, see:
+  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature
+  DOC
+}
+
+variable "eks_runtime_monitoring_enabled" {
+  type        = bool
+  default     = false
+  description = <<-DOC
+  If `true`, enables EKS Runtime Monitoring.
+  Note: Do not enable both EKS_RUNTIME_MONITORING and RUNTIME_MONITORING as Runtime Monitoring already includes
+  threat detection for Amazon EKS resources.
+
+  For more information, see:
+  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature
+  DOC
+}
+
+variable "runtime_monitoring_additional_config" {
+  type = object({
+    eks_addon_management_enabled         = optional(bool, false)
+    ecs_fargate_agent_management_enabled = optional(bool, false)
+    ec2_agent_management_enabled         = optional(bool, false)
+  })
+  default     = {}
+  nullable    = false
+  description = <<-DOC
+  Additional configuration for Runtime Monitoring features.
+
+  eks_addon_management_enabled: Enable EKS add-on management
+  ecs_fargate_agent_management_enabled: Enable ECS Fargate agent management
+  ec2_agent_management_enabled: Enable EC2 agent management
+
+  For more information, see:
+  https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/guardduty_detector_feature#additional_configuration
+  DOC
+}
