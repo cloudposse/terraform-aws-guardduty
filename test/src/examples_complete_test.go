@@ -18,9 +18,10 @@ import (
 // - SNS topic creation and configuration
 // - CloudWatch integration
 func TestExamplesComplete(t *testing.T) {
-	t.Parallel()
+	// Note: t.Parallel() is removed because GuardDuty only allows one detector per AWS account.
+	// Running tests in parallel would cause conflicts when both try to create a detector.
 
-	// Generate a random attribute to ensure parallel tests don't interfere with each other
+	// Generate a random attribute to ensure test uniqueness
 	// Using rand/v2 (Go 1.22+) which is automatically seeded
 	randID := fmt.Sprintf("%05d", rand.IntN(100000))
 	attributes := []string{randID}
