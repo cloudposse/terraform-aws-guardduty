@@ -130,7 +130,7 @@ module "sns_topic" {
   count = local.create_sns_topic ? 1 : 0
 
   source  = "cloudposse/sns-topic/aws"
-  version = "0.20.1"
+  version = "1.2.0"
 
   subscribers     = var.subscribers
   sqs_dlq_enabled = false
